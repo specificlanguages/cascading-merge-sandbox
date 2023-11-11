@@ -12,11 +12,12 @@ jobs:
       - shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
+          owner_and_repo: ${{ github.repository }}
         run: |
           echo "Calculating PR branches:"
 
           # Next branch matching refs/heads/maintenance/* pattern, or empty if we're on the last one
-          next_maintenance_branch=$(gh api '/repos/{owner}/{repo}/git/matching-refs/heads/maintenance/' \
+          next_maintenance_branch=$(gh api "/repos/$owner_and_repo/git/matching-refs/heads/maintenance/' \
             --jq 'map(.ref | ltrimstr("refs/heads/") | select(. > "maintenance/mps20212")) | sort | min')
           echo "  Next maintenance branch: ${next_maintenance_branch:-(none)}"
 
@@ -35,8 +36,8 @@ jobs:
           echo "Pushing ${{ github.ref }} to $head_branch"
           
           # Create or update $head_branch
-          gh api --method=POST -f ref="refs/heads/$head_branch" -f sha=${{ github.sha }} '/repos/{owner}/{repo}/git/refs' ||
-            gh api --method=PATCH -f sha=${{ github.sha }} "/repos/{owner}/{repo}/git/refs/heads/$head_branch" ||
+          gh api --method=POST -f ref="refs/heads/$head_branch" -f sha=${{ github.sha }} "/repos/$owner_and_repo/git/refs" ||
+            gh api --method=PATCH -f sha=${{ github.sha }} "/repos/$owner_and_repo/git/refs/heads/$head_branch" ||
             (echo "Could not push ${{ github.ref }} (${{ github.sha }}) to $head_branch" 1>&2 ; exit 1)
 
           # Create PR if it does not exist yet
