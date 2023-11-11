@@ -17,8 +17,8 @@ jobs:
           echo "Calculating PR branches:"
 
           # Next branch matching refs/heads/maintenance/* pattern, or empty if we're on the last one
-          next_maintenance_branch=$(gh api "/repos/$owner_and_repo/git/matching-refs/heads/maintenance/' \
-            --jq 'map(.ref | ltrimstr("refs/heads/") | select(. > "maintenance/mps20212")) | sort | min')
+          next_maintenance_branch=$(gh api "/repos/$owner_and_repo/git/matching-refs/heads/maintenance/" \
+            --jq 'map(.ref | ltrimstr("refs/heads/") | select(. > "${{ github.ref }}")) | sort | min')
           echo "  Next maintenance branch: ${next_maintenance_branch:-(none)}"
 
           # Substitute the default branch if empty
@@ -45,6 +45,6 @@ jobs:
           then
             gh pr create --head $head_branch --base $base_branch \
               --title "Merge ${{ github.ref_name }} into $base_branch" \
-              --body 'This is an automatic PR which merges changes from `${{ github.ref_name }}` to `$base_branch`.' \
+              --body "This is an automatic PR which merges changes from `${{ github.ref_name }}` to `$base_branch`." \
               --assignee '@me'
           fi
