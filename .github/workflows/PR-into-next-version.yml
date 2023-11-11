@@ -43,8 +43,11 @@ jobs:
           # Create PR if it does not exist yet
           if [[ $(gh pr list --head $head_branch --base $base_branch --json id) == '[]' ]]
           then
-            gh pr create --head $head_branch --base $base_branch \
+            echo "Creating a new pull request"
+            gh pr create --repo $owner_and_repo --head $head_branch --base $base_branch \
               --title "Merge ${{ github.ref_name }} into $base_branch" \
               --body "This is an automatic PR which merges changes from `${{ github.ref_name }}` to `$base_branch`." \
-              --assignee '@me'
+              --assignee '@me' >/dev/null
+          else
+            echo "Pull request already exists"
           fi
