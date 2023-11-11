@@ -18,7 +18,7 @@ jobs:
 
           # Next branch matching refs/heads/maintenance/* pattern, or empty if we're on the last one
           next_maintenance_branch=$(gh api "/repos/$owner_and_repo/git/matching-refs/heads/maintenance/" \
-            --jq 'map(.ref | ltrimstr("refs/heads/") | select(. > "${{ github.ref }}")) | sort | min')
+            --jq 'map(.ref | ltrimstr("refs/heads/") | select(. > "${{ github.ref_name }}")) | sort | min')
           echo "  Next maintenance branch: ${next_maintenance_branch:-(none)}"
 
           # Substitute the default branch if empty
@@ -27,18 +27,18 @@ jobs:
           echo "  PR base branch: $base_branch"
 
           # Calculate PR head branch name (the branch to merge) by substituting 'maintenance' for 'merge'
-          head_branch=${{ github.ref }}
+          head_branch=${{ github.ref_name }}
           head_branch=${head_branch/#maintenance/merge}
           echo "  PR head branch: $head_branch"
 
           echo ""
           
-          echo "Pushing ${{ github.ref }} to $head_branch"
+          echo "Pushing ${{ github.ref_name }} to $head_branch"
           
           # Create or update $head_branch
           gh api --method=POST -f ref="refs/heads/$head_branch" -f sha=${{ github.sha }} "/repos/$owner_and_repo/git/refs" ||
             gh api --method=PATCH -f sha=${{ github.sha }} "/repos/$owner_and_repo/git/refs/heads/$head_branch" ||
-            (echo "Could not push ${{ github.ref }} (${{ github.sha }}) to $head_branch" 1>&2 ; exit 1)
+            (echo "Could not push ${{ github.ref_name }} (${{ github.sha }}) to $head_branch" 1>&2 ; exit 1)
 
           # Create PR if it does not exist yet
           if [[ $(gh pr list --head $head_branch --base $base_branch --json id) == '[]' ]]
