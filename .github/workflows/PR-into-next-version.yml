@@ -37,8 +37,8 @@ jobs:
           
           # Create or update $head_branch
           
-          gh api --method=POST -f ref="refs/heads/$head_branch" -f sha=${{ github.sha }} "/repos/$owner_and_repo/git/refs" ||
-            gh api --method=PATCH -f sha=${{ github.sha }} "/repos/$owner_and_repo/git/refs/heads/$head_branch" ||
+          gh api --silent --method=POST -f ref="refs/heads/$head_branch" -f sha=${{ github.sha }} "/repos/$owner_and_repo/git/refs" ||
+            gh api --silent --method=PATCH -f sha=${{ github.sha }} "/repos/$owner_and_repo/git/refs/heads/$head_branch" ||
             (echo "Could not push ${{ github.ref_name }} (${{ github.sha }}) to $head_branch" 1>&2 ; exit 1)
 
           # Create PR if it does not exist yet
@@ -47,8 +47,8 @@ jobs:
             echo "Creating a new pull request"
             gh pr create --repo $owner_and_repo --head $head_branch --base $base_branch \
               --title "Merge ${{ github.ref_name }} into $base_branch" \
-              --body "This is an automatic PR which merges changes from `${{ github.ref_name }}` to `$base_branch`." \
-              --assignee '@me' >/dev/null
+              --body "This is an automatic PR which merges changes from \`${{ github.ref_name }}\` to \`$base_branch\`." \
+              --assignee '${{ github.actor }}'
           else
             echo "Pull request already exists"
           fi
