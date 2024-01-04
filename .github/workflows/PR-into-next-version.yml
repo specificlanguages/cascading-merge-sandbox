@@ -7,4 +7,4 @@ on:
 
 jobs:
   create-pr:
-    uses: specificlanguages/mps-automerge/.github/workflows/create-merge-pr.yml@main
+    uses: specificlanguages/cascading-merge/.github/workflows/workflow.yml@main
