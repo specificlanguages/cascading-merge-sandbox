@@ -7,4 +7,13 @@ on:
 
 jobs:
   create-pr:
-    uses: specificlanguages/cascading-merge/.github/workflows/workflow.yml@main
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create PR
+        id: create-pr
+        uses: specificlanguages/cascading-merge@experimental/action
+
+      - name: Print PR number and URL
+        run: |
+          echo "PR number: ${{ steps.create-pr.outputs.pr_number }}"
+          echo "PR URL: ${{ steps.create-pr.outputs.pr_url }}"
