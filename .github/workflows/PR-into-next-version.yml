@@ -12,6 +12,8 @@ jobs:
       - name: Create PR
         id: create-pr
         uses: specificlanguages/cascading-merge@experimental/action
+        with:
+          token: ${{ secrets.MY_TOKEN }}
 
       - name: Print PR number and URL
         run: |
