@@ -11,9 +11,10 @@ jobs:
     steps:
       - name: Create PR
         id: create-pr
-        uses: specificlanguages/cascading-merge@experimental/action
+        uses: specificlanguages/cascading-merge@experimental/automerge
         with:
           token: ${{ secrets.MY_TOKEN }}
+          automerge_new_prs: true
 
       - name: Print PR number and URL
         run: |
